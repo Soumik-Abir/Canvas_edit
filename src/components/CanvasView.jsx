@@ -1,52 +1,47 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CanvasEdit from "./CanvasEdit.js";
-import DesignPattern from "../assets/Design_Pattern.png";
-import Mask from "../assets/mask.png";
-import MaskStroke from "../assets/Mask_stroke.png";
-import { data as templateData } from "../assets/data.js";
 
-const CanvasView = ({
-  captionText,
-  ctaText,
-  maskImage,
-  logoImage,
-  backgroundColor,
-  handleDownloadClick,
-}) => {
-  const canvasRef = useRef(null);
+const CanvasView = React.forwardRef(
+  ({ captionText, ctaText, maskImage, logoImage, backgroundColor }, ref) => {
+    const canvasRef = useRef(null);
+    const [canvasWidth, setCanvasWidth] = useState(1080); 
+    const [canvasHeight, setCanvasHeight] = useState(1080);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const canvasDrawer = new CanvasEdit(canvas);
+    useEffect(() => {
+      // Adjust canvas size when component dimensions change
+      const canvas = canvasRef.current;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
-    canvasDrawer.draw(backgroundColor); // Initial drawing
+      // Trigger canvas redraw
+      const canvasDrawer = new CanvasEdit(canvas);
+      canvasDrawer.drawBackground(backgroundColor);
+      canvasDrawer.drawImagesAndTexts({
+        logoImage,
+        maskImage,
+        captionText,
+        ctaText,
+      });
 
-    canvasDrawer.drawImageInRectangle(DesignPattern, 0, 0, 1080, 1080);
-    canvasDrawer.drawImageInRectangle(logoImage, 820, 30, 160, 140);
-    canvasDrawer.drawImageInMask(Mask, 0, 0, 1080, 1080);
-    canvasDrawer.drawImageInMask(MaskStroke, 0, 0, 1080, 1080);
+      return () => {
+        canvasDrawer.clear();
+      };
+    }, [canvasWidth, canvasHeight, backgroundColor, captionText, ctaText, maskImage, logoImage]);
 
-    canvasDrawer.drawCaption(templateData.caption, captionText);
-    canvasDrawer.drawCTA(templateData.cta, ctaText);
-
-    canvasDrawer.drawImageOverMask(maskImage, 56, 442, 970, 600);
-
-    // Cleanup function
-    return () => {
-      canvasDrawer.clear();
-    };
-  }, [captionText, ctaText, maskImage, logoImage, backgroundColor]);
-
-  return (
-    <>
+    return (
       <canvas
-        className="w-[600px] h-[600px]"
-        ref={canvasRef}
-        width={1080}
-        height={1080}
+        ref={(canvas) => {
+          canvasRef.current = canvas;
+          if (typeof ref === "function") {
+            ref(canvas);
+          } else if (ref) {
+            ref.current = canvas;
+          }
+        }}
+        className="w-full h-[400px] md:w-[500px] md:h-[500px]" 
       />
-    </>
-  );
-};
+    );
+  }
+);
 
 export default CanvasView;
