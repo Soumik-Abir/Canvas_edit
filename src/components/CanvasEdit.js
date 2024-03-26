@@ -12,7 +12,6 @@ class CanvasEdit {
   drawBackground(backgroundColor) {
     this.ctx.fillStyle = backgroundColor; // Set the provided background color
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    
   }
 
   drawImagesAndTexts({ logoImage, maskImage, captionText, ctaText }) {
@@ -95,7 +94,7 @@ class CanvasEdit {
     } = cta;
 
     const x = position.x;
-    const y = position.y - 20;
+    const y = position.y;
     const padding = 24;
 
     this.ctx.save();
@@ -137,9 +136,8 @@ class CanvasEdit {
 
   roundedRect(ctx, x, y, width, height, radius) {
     ctx.beginPath();
-    ctx.moveTo(x + radius, y);
     ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.quadraticCurveTo(x + width , y, x + width, y + radius);
     ctx.lineTo(x + width, y + height - radius);
     ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
     ctx.lineTo(x + radius, y + height);
