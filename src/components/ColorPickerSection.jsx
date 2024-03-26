@@ -38,7 +38,6 @@ const ColorPickerSection = ({
           color={backgroundColor}
           onChange={onColorChange}
           open={openColorPicker}
-          disableAlpha={true}
         />
       </div>
     )}
